@@ -1,13 +1,17 @@
-package com.example.demo;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 @RestController
-public class DemoController {
+public class DemoApplication {
+
     @GetMapping("/")
     public String hello() {
-        return "Hello from Java Spring Boot!";
+        return "Hello from Java Spring Boot with Gradle!";
+    }
+
+    @GetMapping("/health")
+    public String health() {
+        return "OK";
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
     }
 }
-
