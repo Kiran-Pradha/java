@@ -1,20 +1,11 @@
-# Use an official JDK runtime as a parent image
-FROM eclipse-temurin:17-jdk-alpine
+# Step 1: Build the app
+FROM gradle:8.4-jdk17 AS build
+COPY --chown=gradle:gradle . /home/gradle/project
+WORKDIR /home/gradle/project
+RUN gradle build --no-daemon
 
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy the Gradle wrapper files and build files
-COPY . .
-
-# Give permission to gradlew
-RUN chmod +x ./gradlew
-
-# Build the application
-RUN ./gradlew build --no-daemon
-
-# Expose port 8080
+# Step 2: Run the app
+FROM openjdk:17-jdk-slim
+COPY --from=build /home/gradle/project/build/libs/demo-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
-# Run the Spring Boot app
-CMD ["java", "-jar", "build/libs/demo-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
